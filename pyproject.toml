@@ -1,3 +1,38 @@
+[project]
+name = "Dolphin"
+version = "1.5"
+description = "A novel OCR approach"
+requires-python = ">=3.11.0"
+dependencies = [
+    "accelerate==1.6.0",
+    "gradio>=5.49.1",
+    "huggingface-hub>=0.36.0",
+    "numpy<2",
+    "omegaconf==2.3.0",
+    "opencv-python==4.11.0.86",
+    "opencv-python-headless==4.5.5.64",
+    "pillow==9.3.0",
+    "pymupdf==1.26",
+    "timm==0.5.4",
+    "transformers==4.47.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.0.0",
+    "flake8>=7.0.0",
+    "mypy>=1.10.0",
+    "pytest>=8.0.0",
+]
+
+[tool.setuptools]
+py-modules = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["demo*", "assets*", "config*", "hf_model*", "deployment*", "temp_gradio_results*", "*.tests*"]
+
+
 [tool.black]
 line-length = 120
 include = '\.pyi?$'

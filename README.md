@@ -122,29 +122,162 @@ Try our demo on [Demo-Dolphin](https://huggingface.co/spaces/ByteDance/Dolphin).
 
 ## 🛠️ Installation
 
+### Prerequisites
+
+**Python 3.11 or higher** is required. Install using UV (recommended):
+```bash
+# Install UV first
+# Linux/macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Then install Python 3.11+ with UV
+uv python install 3.11
+```
+
+**Alternative Python Installation:**
+```bash
+# Ubuntu/Debian
+sudo apt update && sudo apt install python3.11 python3.11-venv
+
+# macOS (using Homebrew)
+brew install python@3.11
+
+# Windows - Download from python.org
+```
+
+### Quick Installation (Recommended)
+
 1. Clone the repository:
-   ```bash
+```bash
    git clone https://github.com/ByteDance/Dolphin.git
    cd Dolphin
-   ```
+```
 
-2. Install the dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. Create and activate a virtual environment with UV:
+```bash
+   uv venv
+   # Activate the virtual environment:
+   # Linux/macOS:
+   source .venv/bin/activate
+   # Windows:
+   .venv\Scripts\activate
+```
 
-3. Download the pre-trained models of *Dolphin-1.5*:
-
-   Visit our Huggingface [model card](https://huggingface.co/ByteDance/Dolphin-1.5), or download model by:
+3. Run the automated installation script:
+```bash
+   python install.py
+```
    
-   ```bash
-   # Download the model from Hugging Face Hub
-   git lfs install
-   git clone https://huggingface.co/ByteDance/Dolphin-1.5 ./hf_model
-   # Or use the Hugging Face CLI
-   pip install huggingface_hub
-   huggingface-cli download ByteDance/Dolphin-1.5 --local-dir ./hf_model
-   ```
+   **Installation Options:**
+   - `--cpu`: Install CPU-only version of PyTorch (no CUDA support)
+   - `--skip-model`: Skip automatic model download
+```bash
+   # Example: CPU-only installation
+   python install.py --cpu
+   
+   # Example: Install without downloading model
+   python install.py --skip-model
+```
+
+   **GPU Requirements:**
+   - GPU with CUDA or ROCm 12.4 support for GPU acceleration
+   - Automatic fallback to CPU if GPU is not detected
+   - macOS users will get MPS (Metal Performance Shaders) support automatically
+
+### Manual Installation (Alternative)
+
+If you prefer manual control over the installation process:
+
+1. **Install PyTorch** (choose based on your system):
+```bash
+   # For CUDA 12.4 (Linux/Windows with GPU)
+   uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+   
+   # For CPU-only
+   uv pip install torch torchvision torchaudio
+   
+   # For macOS (MPS support)
+   uv pip install torch torchvision torchaudio
+```
+
+2. **Install dependencies**:
+```bash
+   uv pip install -e .
+```
+
+3. **Download the model**:
+```bash
+   huggingface-cli download ByteDance/Dolphin-1.5 --local-dir ./hf_model --local-dir-use-symlinks False
+```
+
+### Legacy Installation
+
+For backwards compatibility, you can still use the traditional pip-based installation:
+```bash
+# Create virtual environment (optional but recommended)
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+# or
+venv\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Download model manually (see Manual Installation step 3 above)
+```
+
+### 🎨 Quick Demo with Gradio
+
+Launch the interactive Gradio web interface:
+```bash
+# Make sure your virtual environment is activated first!
+python dolphin_parser_app.py
+```
+
+**Important:** Do NOT use `uv run` for running scripts after installation, as it creates a fresh isolated environment and will reinstall packages (losing your CUDA-enabled PyTorch). Always activate the virtual environment first:
+```bash
+# Activate venv (if not already activated)
+# Linux/macOS:
+source .venv/bin/activate
+# Windows:
+.venv\Scripts\activate
+
+# Then run the script
+python dolphin_parser_app.py
+```
+
+This will start a local web server (typically at `http://127.0.0.1:7860`) where you can:
+- Upload document images or PDFs
+- View parsed results exported as markdown
+
+### 🔧 Troubleshooting
+
+**CUDA not detected: (assuming nvidia, change for amd)**
+- Verify GPU driver installation: `nvidia-smi`
+- Check CUDA version compatibility (requires CUDA 12.4)
+- Use `--cpu` flag if GPU is not available
+
+**Model download fails:**
+- Check internet connection and Hugging Face access
+- Manually download from [Hugging Face](https://huggingface.co/ByteDance/Dolphin-1.5)
+- Ensure sufficient disk space (~2GB required)
+
+**Out of memory errors:**
+- Reduce `--max_batch_size` in page-level parsing
+- Use CPU mode with `--cpu` flag
+- Close other applications to free up memory
+
+**Gradio port already in use:**
+- Gradio will automatically try alternative ports
+- Or manually specify: `uv run dolphin_parser_app.py --server-port 7861`
+
+**UV command not found after installation:**
+- Restart your terminal/shell
+- Add to PATH manually: `export PATH="$HOME/.cargo/bin:$PATH"`
+
 
 ## ⚡ Inference
 
